@@ -2,8 +2,7 @@
 
 namespace App;
 
-namespace App;
-Use App\User;
+use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -12,55 +11,56 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 class Basic extends Model
 {
     
-    public function storeInDb($request){  
+    public function storeInDb($request)
+    {
+        DB::beginTransaction();
 
-        DB::beginTransaction(); 
-        
         $request['pass'] = Hash::make($request['pass']);
 
         try {
-        $count= DB::table('registered_user')->where( 'email', $request['email'] )->get();
-        // print_r($count);
-        // die();
+            $count= DB::table('registered_user')->where('email', $request['email'])->get();
+            // print_r($count);
+            // die();
 
-        $count= count($count);
-        // print_r($count);
-        // die();
-            } catch(Exception $e){
-                DB::rollback();
-                return redirect()->route('register')->withErrors(['Sorry an Error has occured']);
-            }
-    
-        if($count > 0){
-            return 0;
+            $count= count($count);
+            // print_r($count);
+            // die();
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect()->route('register')->withErrors(['Sorry an Error has occured']);
         }
-        else {
+    
+        if ($count > 0) {
+            return 0;
+        } else {
                                    // Transaction starts
             try {
-            DB::table('registered_user')->insert(
-                array(
-                    'email'     =>   $request['email'], 
-                    'pass'      =>   $request['pass'],
-                )
-        );  }   catch(Exception $e){
-
-            DB::rollback();                                  // Roll back      
-            return redirect()->route('register')->withErrors(['Sorry an Error has occured']); 
-        }
-        DB::commit();
-        return 1;
+                DB::table('registered_user')->insert(
+                    array(
+                        'email'     =>   $request['email'],
+                        'pass'      =>   $request['pass'],
+                    )
+                );
+            } catch (Exception $e) {
+                DB::rollback();                                  // Roll back
+                return redirect()->route('register')->withErrors(['Sorry an Error has occured']);
             }
-    } // Stores the Data in Database 
 
-    public function getFromDb($request){
+            DB::commit();
+            return 1;
+        }
+    } // Stores the Data in Database
+
+    public function getFromDb($request)
+    {
         // echo "<pre>";
         // // print_r($request);
         // die($request);
-        $user= DB::table('registered_user')->where('email' , $request['email'])->get(); 
+        $user= DB::table('registered_user')->where('email', $request['email'])->get();
         $res=$user->isEmpty();
 
-        if($res == ""){
-            $user = json_decode(json_encode($user), True);
+        if ($res == "") {
+            $user = json_decode(json_encode($user), true);
             $user = $user[0];
             // print_r($user['pass']."<br>");
             $val = Hash::check($request['pass'], $user['pass']);
@@ -69,46 +69,47 @@ class Basic extends Model
 
             // die();
             
-            if($val){
+            if ($val) {
                 return true;
             } else {
                 return false;
             }
-            
         } else {
             return false;
         }
-        
     } // Obtains the values from Database
 
-    public function getId($request){
+    public function getId($request)
+    {
 
-        $user = DB::table('registered_user')->where('email' , $request['email'])->get();
+        $user = DB::table('registered_user')->where('email', $request['email'])->get();
 
-        $user = json_decode(json_encode($user), True);
+        $user = json_decode(json_encode($user), true);
 
         $user = $user[0];
 
         return $user['id'];
     } //Gets the logged in User ID
 
-    public function pullImage($id){
+    public function pullImage($id)
+    {
         $user= DB::table('registered_user')
-               ->where('id' , $id)
+               ->where('id', $id)
                ->get();
 
-        $user = json_decode(json_encode($user), True);
+        $user = json_decode(json_encode($user), true);
 
         $user=$user[0];
 
         return $user['image'];
     } //Obtains the DP of Logged in User
 
-    public function getAllData($request){
+    public function getAllData($request)
+    {
 
-        $user = DB::table('registered_user')->where('id' , $request)->get();
+        $user = DB::table('registered_user')->where('id', $request)->get();
 
-        $user = json_decode(json_encode($user), True);
+        $user = json_decode(json_encode($user), true);
         // print_r($user);
         // die();
         $user = $user[0];
@@ -117,60 +118,62 @@ class Basic extends Model
         return $user;
     } // Pulls up all the data for display
 
-    public function pushImage($name , $id ){
-
-        
+    public function pushImage($name, $id)
+    {
         DB::table('registered_user')
                 ->where('id', $id)
                 ->update(array(
                 'image'     =>   $name,
-                )); 
+                ));
     } //Set the dp
 
-    public function pushProfData($request , $id){
+    public function pushProfData($request, $id)
+    {
         // print_r($request);
         // die();
         DB::table('registered_user')
         ->where('id', $id)
         ->update(array(
-        'fname'     =>   $request['fname'], 
+        'fname'     =>   $request['fname'],
         'lname'   =>   $request['lname'],
         'city'   =>   $request['city'],
         ));
 
         return true;
-    } //Set the profile details 
+    } //Set the profile details
 
-    public function editPass($request , $id ){
+    public function editPass($request, $id)
+    {
 
         // echo "<pre>";
         // print_r($request);
         // die();
         
-        $user= DB::table('registered_user')->where('id' , $id)->get();
+        $user= DB::table('registered_user')->where('id', $id)->get();
 
-        $user = json_decode(json_encode($user), True);
+        $user = json_decode(json_encode($user), true);
 
         $user = $user[0];
 
         // print_r($user['pass']."<br>");
         $val = Hash::check($request['opass'], $user['pass']);
 
-        if($val){
+        if ($val) {
             $pass = Hash::make($request["pass"]);
              DB::table('registered_user')
                 ->where('id', $id)
                 ->update(array(
                 'pass'     =>   $pass,
-                )); 
+                ));
 
             return true;
         } else {
             return false;
-        }    
+        }
     } //Edit he profile password
 
-    public function addProduct($request, $id , $name){
+    public function addProduct($request, $id, $name)
+    {
 
         $pname = $request["pname"];
         $pdes = $request["pdes"];
@@ -183,17 +186,15 @@ class Basic extends Model
         unset($request["image"]);
         $string = '';
 
-        
-
-        foreach($request as $a)
-        {   
-            if($a != ""){
-            $string=$string."/".$a;}
+        foreach ($request as $a) {
+            if ($a != "") {
+                $string=$string."/".$a;
+            }
         }
 
         DB::table('product')->insert(
             array(
-                'pname'     =>   $pname, 
+                'pname'     =>   $pname,
                 'pdes'   =>   $pdes,
                 'category' =>  $category,
                 'sub' => $string,
@@ -201,26 +202,26 @@ class Basic extends Model
                 'image'     =>   $name,
             )
         );
-
     } //Add the products in the database
 
-    public function getProdCount($id){
+    public function getProdCount($id)
+    {
 
-        $count= DB::table('product')->where( 'parent', $id )->get();
+        $count= DB::table('product')->where('parent', $id)->get();
         $count= count($count);
 
         return $count;
-
     } // Gets the product count of a particular user
 
-    public function getProdName($id){
+    public function getProdName($id)
+    {
 
        
         $count= DB::table('product')
-                ->where( 'parent', $id )
+                ->where('parent', $id)
                 ->get();
 
-        $count = json_decode(json_encode($count), True);
+        $count = json_decode(json_encode($count), true);
 
         $data["array"]=$count;
         //  echo "<pre>";
@@ -231,21 +232,22 @@ class Basic extends Model
         // die();
 
         return $data;
-
     } //obtains the Product Name only
 
-    public function prodAllData($id){
+    public function prodAllData($id)
+    {
 
         $count = DB::table('product')
-                 ->where( 'parent', $id )
+                 ->where('parent', $id)
                  ->get();
 
-        $count = json_decode(json_encode($count), True);
+        $count = json_decode(json_encode($count), true);
 
         return $count;
-    } //obtains all the data of the product 
+    } //obtains all the data of the product
 
-    public function editProductValues($request, $id , $name){
+    public function editProductValues($request, $id, $name)
+    {
 
         $pname = $request["pname"];
         $pdes = $request["pdes"];
@@ -256,9 +258,8 @@ class Basic extends Model
         // print_r($request);
         // die();
 
-        if (array_key_exists("available",$request))
-        {
-              $available=1;
+        if (array_key_exists("available", $request)) {
+            $available=1;
         } else {
             $available=0;
         }
@@ -281,41 +282,42 @@ class Basic extends Model
         // die();
         $string = '';
 
-        foreach($request as $a)
-        {   
-            if($a != ""){
-            $string=$string."/".$a;}
+        foreach ($request as $a) {
+            if ($a != "") {
+                $string=$string."/".$a;
+            }
         }
 
         DB::table('product')
             ->where('id', $id)
             ->update(
-            array(
-                'pname'     =>      $pname, 
-                'pdes'      =>      $pdes,
-                'category'  =>      $category,
-                'sub'       =>      $string,
-                'image'     =>      $name,
-                'stock'     =>      $stock,
-                'available' =>      $available,
-            )
-        );
-
+                array(
+                    'pname'     =>      $pname,
+                    'pdes'      =>      $pdes,
+                    'category'  =>      $category,
+                    'sub'       =>      $string,
+                    'image'     =>      $name,
+                    'stock'     =>      $stock,
+                    'available' =>      $available,
+                )
+            );
     } //Edits the Product Values
 
-    public function productPic($id){
+    public function productPic($id)
+    {
         $count = DB::table('product')
-                 ->where( 'id', $id )
+                 ->where('id', $id)
                  ->get();
 
-        $count = json_decode(json_encode($count), True);
+        $count = json_decode(json_encode($count), true);
         // echo "<pre>";
         // print_r($count[0]);
         // die();
         return $count[0]['image'];
-    } //Sets the product pic 
+    } //Sets the product pic
 
-    public function getCount(){
+    public function getCount()
+    {
 
         $pcount = DB::table('product')
                  ->get();
@@ -337,23 +339,23 @@ class Basic extends Model
         // die();
 
         return $data;
-        
     } //Obtains count of all the product in database
 
-    public function deleteProduct($id){
+    public function deleteProduct($id)
+    {
 
 
         DB::table('product')
         ->where('id', $id)
         ->delete();
+    } // Delete a particular product
 
-    } // Delete a particular product 
+    public function onlineShuffler($id)
+    {
 
-    public function onlineShuffler($id){
+        $user= DB::table('registered_user')->where('id', $id)->get();
 
-        $user= DB::table('registered_user')->where( 'id', $id )->get();
-
-        $user = json_decode(json_encode($user), True);
+        $user = json_decode(json_encode($user), true);
         $user = $user[0];
 
         
@@ -364,23 +366,24 @@ class Basic extends Model
                 ->where('id', $id)
                 ->update(array(
                 'online'     =>   $user,
-                )); 
-
+                ));
     }
 
-    public function adminChecker($id){
-        $result = DB::Table('registered_user')->select('admin')->where('id',$id)->get();
-        $result = json_decode(json_encode($result), True);
+    public function adminChecker($id)
+    {
+        $result = DB::Table('registered_user')->select('admin')->where('id', $id)->get();
+        $result = json_decode(json_encode($result), true);
         $result = $result[0];
-        if($result['admin']) {
+
+        if ($result['admin']) {
             return 1;
-        } else  {
-            return 0; 
+        } else {
+            return 0;
         }
     }
 
-    public function adminModule($id){
-
+    public function adminModule($id)
+    {
         // $users = DB::Table('registered_user')->select('*')->get();
 
         // echo "<pre>";
@@ -388,61 +391,54 @@ class Basic extends Model
         //     print_r($user->id);
         // }
         // die();
-        
     }
 
-    public function getEmail($id){
-
-        $user = DB::Table('registered_user')->where('id' , $id)->get();
-        $users = json_decode(json_encode($user), True);
+    public function getEmail($id)
+    {
+        $user = DB::Table('registered_user')->where('id', $id)->get();
+        $users = json_decode(json_encode($user), true);
         $users= $users[0];
         $i = 0;
-        foreach($users as $key => $user){
-            if( $key == "email"){
+        foreach ($users as $key => $user) {
+            if ($key == "email") {
                 $a[$i] = $user;
                 $i++;
             }
         }
-        $temp=array();
+        $temp = array();
         $i = 0;
 
-        foreach($a as $key => $user){
-
+        foreach ($a as $key => $user) {
             // print_r($user);
             array_push($temp, $user);
-
         }
 
 
         return $temp;
-
     }
 
-    public function adminMaker($request){
+    public function adminMaker($request)
+    {
         $request['pass'] = Hash::make($request['pass']);
 
-        $count= DB::table('registered_user')->where( 'email', $request['email'] )->get();
+        $count= DB::table('registered_user')->where('email', $request['email'])->get();
         // print_r($count);
         // die();
 
         $count= count($count);
 
-        if($count == 0){
-
-        DB::table('registered_user')->insert(
+        if ($count == 0) {
+            DB::table('registered_user')->insert(
                 array(
-                    'email'     =>   $request['email'], 
-                    'pass'      =>   $request['pass'],
-                    'admin'     =>  1,
-                )
-        );
+                        'email'     =>   $request['email'],
+                        'pass'      =>   $request['pass'],
+                        'admin'     =>  1,
+                    )
+            );
 
-        return 1;
-    } else {
-        return 0;
+            return 1;
+        } else {
+            return 0;
+        }
     }
-
-    }
-
-
 }

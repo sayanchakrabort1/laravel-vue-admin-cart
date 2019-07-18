@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
 use App\User;
 use App\Basic;
 use Illuminate\Http\Request;
@@ -11,7 +10,6 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Database\Eloquent\Model;
 use App\Online;
 
-
 class AdminController extends Controller
 {
     // public function __construct()
@@ -19,14 +17,15 @@ class AdminController extends Controller
     //     $this->middleware('UserActive', ['only' => ['edit']]);
     // }
 
-    public function index(Request $request){
-
+    public function index(Request $request)
+    {
         $id = $request->session()
                       ->get('id');
 
-        if($id != null){
-        $basicModel = new Basic(); 
-        $basicModel->onlineShuffler($id);}
+        if ($id != null) {
+            $basicModel = new Basic();
+            $basicModel->onlineShuffler($id);
+        }
         
         $request->session()
                 ->flush();
@@ -34,18 +33,15 @@ class AdminController extends Controller
         return redirect('admin/login');
     }
 
-    public function login(Request $request){
-
-        
-
+    public function login(Request $request)
+    {
         return view('adminlogin');
     }
 
-    public function verify(Request $request){
-        
+    public function verify(Request $request)
+    {
         // print_r($request->all());
         // die();
-
         $customMessages=[
             'email.required' => 'A email is required',
             'pass.required'  => 'A password is required',
@@ -53,45 +49,39 @@ class AdminController extends Controller
             ];
         
              
-        $validator= $this->validate($request, [
-            'email' => 'required|email|max:255',
-            'pass' => 'required',  //|min:6
-        ] ,
-        $customMessages);
+        $validator= $this->validate(
+            $request,
+            [
+                'email' => 'required|email|max:255',
+                'pass' => 'required',  //|min:6
+            ],
+            $customMessages
+        );
         
-        if($validator){
-            
+        if ($validator) {
             return redirect()->route('admin/login');
         } else {
-            
             $basicModel = new Basic();
             $exist =  $basicModel->getFromDb($request);
 
-            
-
-            if($exist){
-
-                
+            if ($exist) {
                 // $basicModel= new Basic();
                 $exist =  $basicModel->getId($request);
 
                 $admin = $basicModel->adminChecker($exist);
 
-                if($admin){
-
+                if ($admin) {
                     // dd('');
+                    $request->session()->put('id', $exist);
+                    $image = $basicModel->pullImage($exist);
+                    $request->session()->put('image', $image);
 
-                $request->session()->put('id',$exist);
-                $image = $basicModel->pullImage($exist);
-                $request->session()->put('image',$image);
-
-                $basicModel->onlineShuffler($exist);
-                
-                return redirect()->route('addashboard'); }
-                else{
+                    $basicModel->onlineShuffler($exist);
+                    
+                    return redirect()->route('addashboard');
+                } else {
                     return redirect()->route('adlogin')->withErrors(['Admin account not found.']);
                 }
-                
             } else {
                 // dd('came');
                 return redirect()->route('adlogin')->withErrors(['Invalid Username/Password']);
@@ -99,8 +89,8 @@ class AdminController extends Controller
         }
     }//Checks the login is valid or not
 
-    public function dashboard(Request $request,User $objUser){
-        
+    public function dashboard(Request $request, User $objUser)
+    {
         $id = $request->session()->get('id');
 
         // $basicModel = new Basic();
@@ -113,11 +103,11 @@ class AdminController extends Controller
         // print_r($users);
         $basicModel = new Basic;
 
-        foreach ($users as $key => $user){
+        foreach ($users as $key => $user) {
             $a[$key] = $basicModel->getEmail($user);
         }
 
-        $data=$basicModel->getCount();
+        $data = $basicModel->getCount();
         $getEmail = $basicModel->getAllData($id);
         $getEmail = $getEmail["email"];
         
@@ -128,43 +118,40 @@ class AdminController extends Controller
         // echo "<pre>";
         // print_r($temp["email"]);
         // die();
-        
-
+    
         return view('dashboard')->with($temp);
     }
 
-    public function mailCatcher(request $request){
+    public function mailCatcher(request $request)
+    {
+        $request = $request->all();
 
-        $request=$request->all();
+        mail($request["recipient"], "Message from Admin", $request["text"]);
 
-        mail($request["recipient"],"Message from Admin",$request["text"]);
-
-         return redirect()->route('addashboard')
-                           -> with('success', 'Your product has been added!');
-
+        return redirect()->route('addashboard')-> with('success', 'Your product has been added!');
     }
 
     
 
-    public function adminCreate(request $request){
-        
-
+    public function adminCreate(request $request)
+    {
         $customMessages=[
             'email.required' => 'A email is required',
             'pass.required'  => 'A password is required',
             ];
         
              
-        $validator= $this->validate($request, [
-            'email' => 'required|email|max:255',
-            'pass' => 'required',
-            
-        ] ,
-        $customMessages);
+        $validator= $this->validate(
+            $request,
+            [
+                'email' => 'required|email|max:255',
+                'pass' => 'required',
+            ],
+            $customMessages
+        );
 
-        if($validator){
+        if ($validator) {
             redirect()->route('register');
-  
         } else {
             // echo "<pre>";
             // print_r($request->all());
@@ -178,19 +165,14 @@ class AdminController extends Controller
             // print_r($flag);
             // die();
 
-            if($flag == 0){
+            if ($flag == 0) {
                 return redirect()->route('addashboard')->withErrors(['User already exist']);
             } else {
-            return redirect()->route('addashboard')
-            -> with('admin', 'string');
+                return redirect()->route('addashboard')
+                -> with('admin', 'string');
             }
         }
-
-        
-
         // print_r($request);
         // die();
     }
-
-
 }

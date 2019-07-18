@@ -16,17 +16,17 @@ class UserActive
      * @return mixed
      */
     public function handle($request, Closure $next)
-    {   
+    {
         // print_r(session()->get('id'));
         // die();
 
-        if (session()->get('id') >= 1){
+        if (session()->get('id') >= 1) {
             // print_r(session()->get('id'));
             // die();
             $expiresAt = Carbon::now()->addMinutes(10);
-            Cache::put('user-is-online-'.session()->get('id'),session()->get('id'),$expiresAt);
+            Cache::put('user-is-online-'.session()->get('id'), session()->get('id'), $expiresAt);
             // die("after store");
-        } 
+        }
         return $next($request);
     }
 }

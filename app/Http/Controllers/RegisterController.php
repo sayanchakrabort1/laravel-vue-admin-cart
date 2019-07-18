@@ -1,16 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\User;
 use App\Basic;
 use Illuminate\Http\Request;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Contracts\Validation\Validator;
 
-
 class RegisterController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $basicModel = new Basic();
             $data=$basicModel->getCount();
 
@@ -21,24 +22,25 @@ class RegisterController extends Controller
         return view('welcome')->with($data);
     } // Displays the home page
 
-    public function register(Request $request){
-        if($request->session()->get('id')){
-            
+    public function register(Request $request)
+    {
+        if ($request->session()->get('id')) {
             $basicModel = new Basic;
-            $admin = $basicModel->adminChecker( $request->session()->get('id') );
+            $admin = $basicModel->adminChecker($request->session()->get('id'));
 
-                if($admin == 1){
-                    $request->session()->flush();
-                    return redirect()->route('login')->withErrors(['Please Login Again']);
-                }
+            if ($admin == 1) {
+                $request->session()->flush();
+                return redirect()->route('login')->withErrors(['Please Login Again']);
+            }
 
             return redirect()->route('mainpage');
-        } else{
+        } else {
             return view('register');
-        } 
+        }
     } //Displays the register page
 
-    public function check(request $request){
+    public function check(request $request)
+    {
 
         $customMessages=[
             'email.required' => 'A email is required',
@@ -48,17 +50,18 @@ class RegisterController extends Controller
             ];
         
              
-        $validator= $this->validate($request, [
-            'email' => 'required|email|max:255',
-            'pass' => 'required',
-            'conpass' => 'required|same:pass', 
-            
-        ] ,
-        $customMessages);
+        $validator = $this->validate(
+            $request,
+            [
+                'email' => 'required|email|max:255',
+                'pass' => 'required',
+                'conpass' => 'required|same:pass'
+            ],
+            $customMessages
+        );
 
-        if($validator){
+        if ($validator) {
             redirect()->route('register');
-  
         } else {
             // echo "<pre>";
             // print_r($request->all());
@@ -69,73 +72,72 @@ class RegisterController extends Controller
             // print_r($flag);
             // die();
 
-            if($flag == 0){
+            if ($flag == 0) {
                 return redirect()->route('register')->withErrors(['User already exist']);
             } else {
-            return redirect()->route('login'); 
+                return redirect()->route('login');
             }
         }
     }//Check the registers content
 
-    public function login(Request $request){
-        
-
-        if($request->session()->get('id')){
+    public function login(Request $request)
+    {
+        if ($request->session()->get('id')) {
             $basicModel = new Basic;
-            $admin = $basicModel->adminChecker( $request->session()->get('id') );
+            $admin = $basicModel->adminChecker($request->session()->get('id'));
 
-                if($admin == 1){
-                    $request->session()->flush();
-                    return redirect()->route('login')->withErrors(['Please Login Again']);
-                }
+            if ($admin == 1) {
+                $request->session()->flush();
+                return redirect()->route('login')->withErrors(['Please Login Again']);
+            }
+            
             return redirect()->route('mainpage');
-        } else{
+        } else {
             return view('login');
-        } 
+        }
     }//Displays the login page
 
-    public function verify(request $request){
-
+    public function verify(request $request)
+    {
         $customMessages=[
             'email.required' => 'A email is required',
             'pass.required'  => 'A password is required',
             'pass.min'  => 'Minimum length of password is 6',
             ];
-        
-             
-        $validator= $this->validate($request, [
-            'email' => 'required|email|max:255',
-            'pass' => 'required',  //|min:6
-        ] ,
-        $customMessages);
+          
+        $validator = $this->validate(
+            $request,
+            [
+                'email' => 'required|email|max:255',
+                'pass' => 'required',  //|min:6
+            ],
+            $customMessages
+        );
 
-        if($validator){
+        if ($validator) {
             return redirect()->route('login');
         } else {
-            
             $basicModel = new Basic();
             $exist =  $basicModel->getFromDb($request);
 
-            if($exist){
-
+            if ($exist) {
                 // $basicModel= new Basic();
                 $exist =  $basicModel->getId($request);
 
-                $admin = $basicModel->adminChecker( $exist );
+                $admin = $basicModel->adminChecker($exist);
 
-                if($admin == 1){
+                if ($admin == 1) {
                     return redirect()->route('login')->withErrors(['User not found']);
                 }
                 
-                $request->session()->put('id',$exist);
+                $request->session()->put('id', $exist);
 
                 $image = $basicModel->pullImage($exist);
-                $request->session()->put('image',$image);
+                $request->session()->put('image', $image);
 
                 $basicModel->onlineShuffler($exist);
                 
                 return redirect()->route('mainpage');
-                
             } else {
                 return redirect()->route('login')->withErrors(['Invalid Username/Password']);
             }

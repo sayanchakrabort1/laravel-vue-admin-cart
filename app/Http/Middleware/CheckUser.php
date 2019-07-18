@@ -15,12 +15,10 @@ class CheckUser
      * @return mixed
      */
     public function handle($request, Closure $next)
-    {   
-        if (session()->get('id') == ''){
-            
-        return redirect()->route('login');
-        
+    {
+        if (session()->get('id') == '') {
+            return redirect()->route('login');
+        }
+        return $next($request);
     }
-    return $next($request);
-}
 }
