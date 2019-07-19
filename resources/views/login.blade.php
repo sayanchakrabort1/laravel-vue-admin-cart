@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="{{ app()->getLocale() }}">
 
 <head>
@@ -70,7 +71,6 @@
         <navbar></navbar>
         <div class="total container">
 
-            
                 @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
