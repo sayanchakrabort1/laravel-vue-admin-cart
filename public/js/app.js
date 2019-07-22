@@ -2053,6 +2053,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Component mounted.');
@@ -2064,7 +2066,8 @@ __webpack_require__.r(__webpack_exports__);
       csrfToken: null,
       emailFlag: 0,
       passFlag: 0,
-      error: 0
+      error: 0,
+      holder: "password"
     };
   },
   created: function created() {
@@ -2092,6 +2095,13 @@ __webpack_require__.r(__webpack_exports__);
         event.preventDefault();
       } else {
         this.error = 0;
+      }
+    },
+    clicker: function clicker() {
+      if (this.holder == "password") {
+        this.holder = "text";
+      } else {
+        this.holder = "password";
       }
     }
   }
@@ -2859,6 +2869,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Component mounted.');
@@ -2873,7 +2885,8 @@ __webpack_require__.r(__webpack_exports__);
       passFlag: 0,
       conFlag: 0,
       error: 0,
-      sameFlag: 0
+      sameFlag: 0,
+      holder: "password"
     };
   },
   created: function created() {
@@ -2921,6 +2934,13 @@ __webpack_require__.r(__webpack_exports__);
         event.preventDefault();
       } else {
         this.error = 0;
+      }
+    },
+    clicker: function clicker() {
+      if (this.holder == "password") {
+        this.holder = "text";
+      } else {
+        this.holder = "password";
       }
     }
   }
@@ -34465,39 +34485,156 @@ var render = function() {
               _c("div", { staticClass: "form-group" }, [
                 _c("label", { attrs: { for: "pwd" } }, [_vm._v("Password:")]),
                 _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.pass,
-                      expression: "pass"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: { type: "password", name: "pass", id: "pwd" },
-                  domProps: { value: _vm.pass },
-                  on: {
-                    keydown: function($event) {
-                      if (
-                        !$event.type.indexOf("key") &&
-                        _vm._k($event.keyCode, "space", 32, $event.key, [
-                          " ",
-                          "Spacebar"
-                        ])
-                      ) {
-                        return null
-                      }
-                      $event.preventDefault()
-                    },
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.pass = $event.target.value
-                    }
-                  }
-                }),
+                _c(
+                  "div",
+                  { staticStyle: { display: "flex", "flex-direction": "row" } },
+                  [
+                    _vm.holder === "checkbox"
+                      ? _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.pass,
+                              expression: "pass"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            name: "pass",
+                            placeholder: "Password",
+                            id: "pwd",
+                            type: "checkbox"
+                          },
+                          domProps: {
+                            checked: Array.isArray(_vm.pass)
+                              ? _vm._i(_vm.pass, null) > -1
+                              : _vm.pass
+                          },
+                          on: {
+                            keydown: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "space",
+                                  32,
+                                  $event.key,
+                                  [" ", "Spacebar"]
+                                )
+                              ) {
+                                return null
+                              }
+                              $event.preventDefault()
+                            },
+                            change: function($event) {
+                              var $$a = _vm.pass,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 && (_vm.pass = $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    (_vm.pass = $$a
+                                      .slice(0, $$i)
+                                      .concat($$a.slice($$i + 1)))
+                                }
+                              } else {
+                                _vm.pass = $$c
+                              }
+                            }
+                          }
+                        })
+                      : _vm.holder === "radio"
+                      ? _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.pass,
+                              expression: "pass"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            name: "pass",
+                            placeholder: "Password",
+                            id: "pwd",
+                            type: "radio"
+                          },
+                          domProps: { checked: _vm._q(_vm.pass, null) },
+                          on: {
+                            keydown: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "space",
+                                  32,
+                                  $event.key,
+                                  [" ", "Spacebar"]
+                                )
+                              ) {
+                                return null
+                              }
+                              $event.preventDefault()
+                            },
+                            change: function($event) {
+                              _vm.pass = null
+                            }
+                          }
+                        })
+                      : _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.pass,
+                              expression: "pass"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            name: "pass",
+                            placeholder: "Password",
+                            id: "pwd",
+                            type: _vm.holder
+                          },
+                          domProps: { value: _vm.pass },
+                          on: {
+                            keydown: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "space",
+                                  32,
+                                  $event.key,
+                                  [" ", "Spacebar"]
+                                )
+                              ) {
+                                return null
+                              }
+                              $event.preventDefault()
+                            },
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.pass = $event.target.value
+                            }
+                          }
+                        }),
+                    _c(
+                      "button",
+                      { attrs: { type: "button" }, on: { click: _vm.clicker } },
+                      [_c("i", { staticClass: "fa fa-eye hey" })]
+                    )
+                  ]
+                ),
                 _vm._v(" "),
                 _vm.passFlag
                   ? _c("small", { staticStyle: { color: "red" } }, [
@@ -36461,43 +36598,144 @@ var render = function() {
           [
             _vm._m(2),
             _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.pass,
-                  expression: "pass"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: {
-                type: "password",
-                placeholder: "Password",
-                name: "pass"
-              },
-              domProps: { value: _vm.pass },
-              on: {
-                keydown: function($event) {
-                  if (
-                    !$event.type.indexOf("key") &&
-                    _vm._k($event.keyCode, "space", 32, $event.key, [
-                      " ",
-                      "Spacebar"
-                    ])
-                  ) {
-                    return null
-                  }
-                  $event.preventDefault()
-                },
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.pass = $event.target.value
-                }
-              }
-            }),
+            _c(
+              "div",
+              { staticStyle: { display: "flex", "flex-direction": "row" } },
+              [
+                _vm.holder === "checkbox"
+                  ? _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.pass,
+                          expression: "pass"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        name: "pass",
+                        placeholder: "Password",
+                        type: "checkbox"
+                      },
+                      domProps: {
+                        checked: Array.isArray(_vm.pass)
+                          ? _vm._i(_vm.pass, null) > -1
+                          : _vm.pass
+                      },
+                      on: {
+                        keydown: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k($event.keyCode, "space", 32, $event.key, [
+                              " ",
+                              "Spacebar"
+                            ])
+                          ) {
+                            return null
+                          }
+                          $event.preventDefault()
+                        },
+                        change: function($event) {
+                          var $$a = _vm.pass,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = null,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 && (_vm.pass = $$a.concat([$$v]))
+                            } else {
+                              $$i > -1 &&
+                                (_vm.pass = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
+                            }
+                          } else {
+                            _vm.pass = $$c
+                          }
+                        }
+                      }
+                    })
+                  : _vm.holder === "radio"
+                  ? _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.pass,
+                          expression: "pass"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        name: "pass",
+                        placeholder: "Password",
+                        type: "radio"
+                      },
+                      domProps: { checked: _vm._q(_vm.pass, null) },
+                      on: {
+                        keydown: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k($event.keyCode, "space", 32, $event.key, [
+                              " ",
+                              "Spacebar"
+                            ])
+                          ) {
+                            return null
+                          }
+                          $event.preventDefault()
+                        },
+                        change: function($event) {
+                          _vm.pass = null
+                        }
+                      }
+                    })
+                  : _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.pass,
+                          expression: "pass"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        name: "pass",
+                        placeholder: "Password",
+                        type: _vm.holder
+                      },
+                      domProps: { value: _vm.pass },
+                      on: {
+                        keydown: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k($event.keyCode, "space", 32, $event.key, [
+                              " ",
+                              "Spacebar"
+                            ])
+                          ) {
+                            return null
+                          }
+                          $event.preventDefault()
+                        },
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.pass = $event.target.value
+                        }
+                      }
+                    }),
+                _c(
+                  "button",
+                  { attrs: { type: "button" }, on: { click: _vm.clicker } },
+                  [_c("i", { staticClass: "fa fa-eye hey" })]
+                )
+              ]
+            ),
             _vm._v(" "),
             _vm.passFlag
               ? _c("small", { staticStyle: { color: "red" } }, [

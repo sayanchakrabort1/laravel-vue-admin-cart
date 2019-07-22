@@ -3,18 +3,20 @@
   <form autocomplete="off" method="POST" v-on:submit="checker" action="/check" >
       <div class="panel-heading" style="background-color:#d9edf7; border-radius: 0px 0px 8px 8px;">
         <h2 style="margin-left:41%;">Sign up</h2>
-      </div> 
+      </div>
       <hr>
 
       <div style="margin-bottom: 3%;" class="input-group">
         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
         <input type="email" class="form-control" placeholder="Enter email" name="email" v-model="email" @keydown.space.prevent>
-        <small style="color:red;" v-if="emailFlag">Email cannot be empty</small>                                        
+        <small style="color:red;" v-if="emailFlag">Email cannot be empty</small>
       </div>
 
       <div class="input-group " style="margin-bottom: 3%;">
         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-        <input type="password" class="form-control" placeholder="Password" name="pass" v-model="pass" @keydown.space.prevent>
+        <div style="display:flex; flex-direction:row;">
+          <input :type="holder" class="form-control" name="pass" placeholder="Password" v-model="pass" @keydown.space.prevent><button type="button" v-on:click="clicker"><i  class="fa fa-eye hey"></i></button>
+        </div>
         <small style="color:red;" v-if="passFlag">Password cannot be empty</small>
         <small style="color:red;" v-if="sameFlag">Passwords doesn't match!</small>
       </div>
@@ -28,7 +30,7 @@
         <input type="hidden" name="_token" :value="csrfToken">
       <button type="submit"  class="btn btn-success bot-margin">Submit</button>
     </form>
-    
+
     </div>
 </template>
 
@@ -52,6 +54,7 @@
               conFlag: 0,
               error: 0,
               sameFlag: 0,
+              holder: "password",
             };
 
         },
@@ -99,15 +102,22 @@
                  this.sameFlag=0;
                }
 
-               
+
 
               if(this.error == 1){
                  event.preventDefault();
                } else {
                  this.error=0;
                }
-                
-    }
+            },
+
+            clicker(){
+              if (this.holder == "password") {
+                this.holder="text";
+              } else {
+                this.holder="password";
+              }
+            },
 
         }
 
