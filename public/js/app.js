@@ -2443,6 +2443,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Component mounted.');
@@ -2457,7 +2459,8 @@ __webpack_require__.r(__webpack_exports__);
       passFlag: 0,
       conFlag: 0,
       error: 0,
-      sameFlag: 0
+      sameFlag: 0,
+      holder: "password"
     };
   },
   created: function created() {
@@ -2491,6 +2494,13 @@ __webpack_require__.r(__webpack_exports__);
         event.preventDefault();
       } else {
         this.error = 0;
+      }
+    },
+    clicker: function clicker() {
+      if (this.holder == "password") {
+        this.holder = "text";
+      } else {
+        this.holder = "password";
       }
     }
   }
@@ -35342,43 +35352,144 @@ var render = function() {
           [
             _vm._m(2),
             _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.pass,
-                  expression: "pass"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: {
-                type: "password",
-                name: "pass",
-                placeholder: "Password"
-              },
-              domProps: { value: _vm.pass },
-              on: {
-                keydown: function($event) {
-                  if (
-                    !$event.type.indexOf("key") &&
-                    _vm._k($event.keyCode, "space", 32, $event.key, [
-                      " ",
-                      "Spacebar"
-                    ])
-                  ) {
-                    return null
-                  }
-                  $event.preventDefault()
-                },
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.pass = $event.target.value
-                }
-              }
-            }),
+            _c(
+              "div",
+              { staticStyle: { display: "flex", "flex-direction": "row" } },
+              [
+                _vm.holder === "checkbox"
+                  ? _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.pass,
+                          expression: "pass"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        name: "pass",
+                        placeholder: "Password",
+                        type: "checkbox"
+                      },
+                      domProps: {
+                        checked: Array.isArray(_vm.pass)
+                          ? _vm._i(_vm.pass, null) > -1
+                          : _vm.pass
+                      },
+                      on: {
+                        keydown: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k($event.keyCode, "space", 32, $event.key, [
+                              " ",
+                              "Spacebar"
+                            ])
+                          ) {
+                            return null
+                          }
+                          $event.preventDefault()
+                        },
+                        change: function($event) {
+                          var $$a = _vm.pass,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = null,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 && (_vm.pass = $$a.concat([$$v]))
+                            } else {
+                              $$i > -1 &&
+                                (_vm.pass = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
+                            }
+                          } else {
+                            _vm.pass = $$c
+                          }
+                        }
+                      }
+                    })
+                  : _vm.holder === "radio"
+                  ? _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.pass,
+                          expression: "pass"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        name: "pass",
+                        placeholder: "Password",
+                        type: "radio"
+                      },
+                      domProps: { checked: _vm._q(_vm.pass, null) },
+                      on: {
+                        keydown: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k($event.keyCode, "space", 32, $event.key, [
+                              " ",
+                              "Spacebar"
+                            ])
+                          ) {
+                            return null
+                          }
+                          $event.preventDefault()
+                        },
+                        change: function($event) {
+                          _vm.pass = null
+                        }
+                      }
+                    })
+                  : _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.pass,
+                          expression: "pass"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        name: "pass",
+                        placeholder: "Password",
+                        type: _vm.holder
+                      },
+                      domProps: { value: _vm.pass },
+                      on: {
+                        keydown: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k($event.keyCode, "space", 32, $event.key, [
+                              " ",
+                              "Spacebar"
+                            ])
+                          ) {
+                            return null
+                          }
+                          $event.preventDefault()
+                        },
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.pass = $event.target.value
+                        }
+                      }
+                    }),
+                _c(
+                  "button",
+                  { attrs: { type: "button" }, on: { click: _vm.clicker } },
+                  [_c("i", { staticClass: "fa fa-eye hey" })]
+                )
+              ]
+            ),
             _vm._v(" "),
             _vm.passFlag
               ? _c("small", { staticStyle: { color: "red" } }, [
@@ -49570,15 +49681,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************!*\
   !*** ./resources/assets/js/components/dashboard.vue ***!
   \******************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dashboard_vue_vue_type_template_id_2073dee6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dashboard.vue?vue&type=template&id=2073dee6& */ "./resources/assets/js/components/dashboard.vue?vue&type=template&id=2073dee6&");
 /* harmony import */ var _dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dashboard.vue?vue&type=script&lang=js& */ "./resources/assets/js/components/dashboard.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -49608,7 +49718,7 @@ component.options.__file = "resources/assets/js/components/dashboard.vue"
 /*!*******************************************************************************!*\
   !*** ./resources/assets/js/components/dashboard.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49762,14 +49872,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************!*\
   !*** ./resources/assets/js/components/loginpage.vue ***!
   \******************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _loginpage_vue_vue_type_template_id_11858971___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./loginpage.vue?vue&type=template&id=11858971& */ "./resources/assets/js/components/loginpage.vue?vue&type=template&id=11858971&");
 /* harmony import */ var _loginpage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./loginpage.vue?vue&type=script&lang=js& */ "./resources/assets/js/components/loginpage.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _loginpage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _loginpage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -49799,7 +49910,7 @@ component.options.__file = "resources/assets/js/components/loginpage.vue"
 /*!*******************************************************************************!*\
   !*** ./resources/assets/js/components/loginpage.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

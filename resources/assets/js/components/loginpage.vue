@@ -7,23 +7,25 @@
             <!-- <h1>LOGIN</h1> -->
             <div class="panel-heading" style="background-color:#d9edf7; border-radius: 0px 0px 8px 8px;">
               <h2 style="margin-left:43%;">Login</h2>
-            </div> 
+            </div>
             <hr>
             <div class="form-group">
-           
+
             <div style="margin-bottom: 25px" class="input-group">
               <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
               <input type="email" class="form-control" name="email" placeholder="Enter email" v-model="email" @keydown.space.prevent>
-              <small style="color:red;" v-if="emailFlag">Email cannot be empty</small>                                        
+              <small style="color:red;" v-if="emailFlag">Email cannot be empty</small>
             </div>
             </div>
-      
+
             <div style="margin-bottom: 25px" class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                <input type="password" class="form-control" name="pass" placeholder="Password" v-model="pass" @keydown.space.prevent>
+                <div style="display:flex; flex-direction:row;">
+                <input :type="holder" class="form-control" name="pass" placeholder="Password" v-model="pass" @keydown.space.prevent><button type="button" v-on:click="clicker"><i  class="fa fa-eye hey"></i></button>
+                </div>
                 <small style="color:red;" v-if="passFlag">Password cannot be empty</small>
             </div>
-            
+
 
             <input type="hidden" name="_token" :value="csrfToken">
             <button type="submit" class="btn btn-success">Login</button>
@@ -52,6 +54,7 @@
               conFlag: 0,
               error: 0,
               sameFlag: 0,
+              holder: "password",
             };
         },
 
@@ -89,7 +92,15 @@
                } else {
                  this.error=0;
                }
-            }
+            },
+
+            clicker(){
+              if (this.holder == "password") {
+                this.holder="text";
+              } else {
+                this.holder="password";
+              }
+            },
 
         }
 
